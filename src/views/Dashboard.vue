@@ -4,8 +4,9 @@ import BaseCard from '@/components/base/BaseCard.vue'
 import StatCard from '@/components/base/StatCard.vue'
 import Badge from '@/components/base/Badge.vue'
 import ProgressBar from '@/components/base/ProgressBar.vue'
-import HorizontalBarChart from '@/components/charts/HorizontalBarChart.vue'
 import { holeSpreads, holeTagesveraenderung, holeMeistgehandelt } from '@/services/api.js'
+import { holeName } from '@/data/instrumentNamen.js'
+import SpreadRankingRow from '@/components/base/SpreadRankingRow.vue'
 
 const spreads = ref([])
 const topMover = ref([])
@@ -40,7 +41,7 @@ const topSechsSpreads = computed(() =>
 
 const chartDaten = computed(() => ({
   eintraege: topSechsSpreads.value.map((s) => ({
-    label: s.isin,
+    label: holeName(s.isin),
     wert: Math.abs(s.spread_prozent),
   })),
 }))
@@ -66,7 +67,7 @@ onMounted(() => {
         :value="groessterSpread.spread_prozent.toFixed(2)"
         unit="%"
       >
-        {{ groessterSpread.isin }} · {{ groessterSpread.boerse_a }} vs. {{ groessterSpread.boerse_b }}
+        {{ holeName(groessterSpread.isin) }} · {{ groessterSpread.boerse_a }} vs. {{ groessterSpread.boerse_b }}
       </StatCard>
 
       <BaseCard padding="lg">
@@ -78,16 +79,27 @@ onMounted(() => {
       <BaseCard padding="lg" class="dashboard__wide">
         <h2 class="dashboard__heading">Preisunterschiede zwischen den Handelsplätzen</h2>
         <p class="dashboard__subheading">Die sechs Wertpapiere mit dem größten Unterschied zwischen zwei Börsen</p>
-        <HorizontalBarChart :eintraege="chartDaten.eintraege" />
+        <SpreadRankingRow
+          v-for="s in topSechsSpreads"
+          :key="s.isin + s.boerse_a + s.boerse_b"
+          :name="holeName(s.isin)"
+          :boerse-a="s.boerse_a"
+          :boerse-b="s.boerse_b"
+          :spread-prozent="Math.abs(s.spread_prozent)"
+          :max-spread="Math.abs(topSechsSpreads[0]?.spread_prozent) || 1"
+        />
       </BaseCard>
 
       <BaseCard padding="lg">
         <h2 class="dashboard__heading">Top Mover</h2>
         <div v-for="mover in topMover" :key="mover.isin + mover.boerse" class="dashboard__row">
-          <span>{{ mover.isin }}</span>
+          <span class="dashboard__row-name">{{ holeName(mover.isin) }}</span>
           <Badge :label="mover.boerse" :boerse="mover.boerse" />
-          <span :class="mover.veraenderung_prozent >= 0 ? 'dashboard__positiv' : 'dashboard__negativ'">
-            {{ mover.veraenderung_prozent.toFixed(2) }}%
+          <span
+            class="dashboard__row-value"
+            :class="mover.veraenderung_prozent >= 0 ? 'dashboard__positiv' : 'dashboard__negativ'"
+          >
+        {{ mover.veraenderung_prozent.toFixed(2) }}%
           </span>
         </div>
       </BaseCard>
@@ -95,9 +107,9 @@ onMounted(() => {
       <BaseCard padding="lg">
         <h2 class="dashboard__heading">Meistgehandelt</h2>
         <div v-for="eintrag in meistgehandelt" :key="eintrag.isin + eintrag.boerse" class="dashboard__row">
-          <span>{{ eintrag.isin }}</span>
+          <span class="dashboard__row-name">{{ holeName(eintrag.isin) }}</span>
           <Badge :label="eintrag.boerse" :boerse="eintrag.boerse" />
-          <span>{{ eintrag.gesamt_trades }}</span>
+          <span class="dashboard__row-value">{{ eintrag.gesamt_trades }}</span>
         </div>
       </BaseCard>
     </div>
@@ -145,10 +157,29 @@ onMounted(() => {
 }
 
 .dashboard__row {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
   align-items: center;
+  gap: var(--space-md);
   padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.dashboard__row:last-child {
+  border-bottom: none;
+}
+
+.dashboard__row-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+.dashboard__row-value {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  min-width: 60px;
 }
 
 .dashboard__positiv {
