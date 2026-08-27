@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 
 const props = defineProps({
+  isin: { type: String, required: true },
   name: { type: String, required: true },
   boerseA: { type: String, required: true },
   boerseB: { type: String, required: true },
@@ -9,13 +10,15 @@ const props = defineProps({
   maxSpread: { type: Number, required: true },
 })
 
+const emit = defineEmits(['select'])
+
 const balkenBreite = computed(() => {
   return Math.min((props.spreadProzent / props.maxSpread) * 100, 100)
 })
 </script>
 
 <template>
-  <div class="spread-row">
+  <div class="spread-row" role="button" tabindex="0" @click="emit('select', isin)">
     <div class="spread-row__label">
       <p class="spread-row__name">{{ name }}</p>
       <p class="spread-row__pair">{{ boerseA }} / {{ boerseB }}</p>
@@ -34,6 +37,12 @@ const balkenBreite = computed(() => {
   align-items: center;
   gap: var(--space-md);
   padding: var(--space-sm) 0;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.spread-row:hover {
+  opacity: 0.8;
 }
 
 .spread-row__label {

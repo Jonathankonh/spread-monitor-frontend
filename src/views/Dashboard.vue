@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import BaseCard from '@/components/base/BaseCard.vue'
 import StatCard from '@/components/base/StatCard.vue'
 import Badge from '@/components/base/Badge.vue'
@@ -7,11 +7,13 @@ import ProgressBar from '@/components/base/ProgressBar.vue'
 import { holeSpreads, holeTagesveraenderung, holeMeistgehandelt } from '@/services/api.js'
 import { holeName } from '@/data/instrumentNamen.js'
 import SpreadRankingRow from '@/components/base/SpreadRankingRow.vue'
+import InstrumentDetail from '@/views/InstrumentDetail.vue'
 
 const spreads = ref([])
 const topMover = ref([])
 const meistgehandelt = ref([])
 const ladeFehler = ref(null)
+const ausgewaehlteIsin = ref('')
 
 async function ladeAlles() {
   try {
@@ -39,16 +41,15 @@ const topSechsSpreads = computed(() =>
     .slice(0, 6)
 )
 
-const chartDaten = computed(() => ({
-  eintraege: topSechsSpreads.value.map((s) => ({
-    label: holeName(s.isin),
-    wert: Math.abs(s.spread_prozent),
-  })),
-}))
-
 const marktbreite = computed(() => {
   const positive = topMover.value.filter((m) => m.veraenderung_prozent >= 0).length
   return { value: positive, max: topMover.value.length }
+})
+
+watch(topSechsSpreads, (neueSpreads) => {
+  if (!ausgewaehlteIsin.value && neueSpreads.length > 0) {
+    ausgewaehlteIsin.value = neueSpreads[0].isin
+  }
 })
 
 onMounted(() => {
@@ -86,13 +87,17 @@ onMounted(() => {
             <SpreadRankingRow
               v-for="s in topSechsSpreads"
               :key="s.isin + s.boerse_a + s.boerse_b"
+              :isin="s.isin"
               :name="holeName(s.isin)"
               :boerse-a="s.boerse_a"
               :boerse-b="s.boerse_b"
               :spread-prozent="Math.abs(s.spread_prozent)"
               :max-spread="Math.abs(topSechsSpreads[0]?.spread_prozent) || 1"
+              @select="ausgewaehlteIsin = $event"
             />
           </BaseCard>
+
+          <InstrumentDetail v-if="ausgewaehlteIsin" :isin="ausgewaehlteIsin" />
         </div>
 
         <div class="dashboard__sidebar">
