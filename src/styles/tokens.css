@@ -1,20 +1,53 @@
 :root {
-  --color-bg: #ffffff;
-  --color-surface: #f7f7f8;
-  --color-surface-hover: #eeeef0;
-  --color-text: #111111;
-  --color-text-muted: #6b6b6f;
-  --color-border: rgba(0, 0, 0, 0.06);
+  --bg: oklch(0.17 0.008 300);
+  --surface: oklch(0.21 0.012 300);
+  --raised: oklch(0.24 0.014 300);
+  --surface-sel: oklch(0.26 0.045 300);
+  --footer: oklch(0.19 0.010 300);
+  --fg: oklch(0.97 0.004 300);
+  --fg2: oklch(0.74 0.010 300);
+  --fg3: oklch(0.62 0.012 300);
+  --fg4: oklch(0.56 0.012 300);
+  --line: oklch(0.28 0.014 300);
+  --track: oklch(0.26 0.012 300);
+  --accent: oklch(0.72 0.17 300);
+  --accent-text: oklch(0.85 0.12 300);
+  --accent-soft: oklch(0.26 0.045 300);
+  --up: oklch(0.72 0.15 155);
+  --down: oklch(0.68 0.17 27);
 
-  --color-accent: #8b5cf6;
-  --color-accent-soft: rgba(139, 92, 246, 0.12);
+  --grad-bar: linear-gradient(90deg, oklch(0.52 0.16 305), oklch(0.78 0.16 298));
+  --grad-hero: linear-gradient(135deg, oklch(0.28 0.075 300), oklch(0.22 0.035 305));
 
-  --color-positive: #22c55e;
-  --color-negative: #ef4444;
+  --venue-gettex: oklch(0.58 0.20 300);
+  --venue-xetra: oklch(0.58 0.13 248);
+  --venue-ls: oklch(0.60 0.10 195);
+  --venue-eix: oklch(0.66 0.13 72);
+
+  --radius-page: 32px;
+  --radius-card: 26px;
+  --radius-row: 20px;
+  --radius-tile: 18px;
+  --radius-pill: 999px;
+  --radius-badge: 6px;
+
+  --font-ui: 'Instrument Sans', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--raised);
+  --color-text: var(--fg);
+  --color-text-muted: var(--fg3);
+  --color-border: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-positive: var(--up);
+  --color-negative: var(--down);
 
   --radius-sm: 8px;
   --radius-md: 16px;
-  --radius-lg: 24px;
+  --radius-lg: var(--radius-card);
 
   --space-xs: 4px;
   --space-sm: 8px;
@@ -22,23 +55,12 @@
   --space-lg: 24px;
   --space-xl: 40px;
 
-  --font-family: -apple-system, 'Inter', 'Segoe UI', sans-serif;
-}
-
-[data-theme='dark'] {
-  --color-bg: #0a0a0d;
-  --color-surface: #16151b;
-  --color-surface-hover: #1e1d24;
-  --color-text: #f5f5f7;
-  --color-text-muted: #9a9aa2;
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-accent-soft: rgba(139, 92, 246, 0.18);
+  --font-family: var(--font-ui);
 }
 
 body {
-  background: var(--color-bg);
-  color: var(--color-text);
+  background: var(--bg);
+  color: var(--fg);
   font-family: var(--font-family);
   margin: 0;
-  transition: background 0.2s, color 0.2s;
 }

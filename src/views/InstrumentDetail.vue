@@ -18,7 +18,9 @@ const ladeFehler = ref(null)
 
 async function lade() {
   try {
-    rohdaten.value = await holeVerlauf(props.isin)
+    const alleDaten = await holeVerlauf(props.isin)
+    const heute = new Date().toISOString().split('T')[0]
+    rohdaten.value = alleDaten.filter((d) => d.bucket_start.startsWith(heute))
     ladeFehler.value = null
   } catch (fehler) {
     ladeFehler.value = fehler.message

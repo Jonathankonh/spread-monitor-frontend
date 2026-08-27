@@ -8,12 +8,15 @@ import { holeSpreads, holeTagesveraenderung, holeMeistgehandelt } from '@/servic
 import { holeName } from '@/data/instrumentNamen.js'
 import SpreadRankingRow from '@/components/base/SpreadRankingRow.vue'
 import InstrumentDetail from '@/views/InstrumentDetail.vue'
+import SecurityListCard from '@/components/SecurityListCard.vue'
+import { holeSparklines } from '@/services/api.js'
 
 const spreads = ref([])
 const topMover = ref([])
 const meistgehandelt = ref([])
 const ladeFehler = ref(null)
 const ausgewaehlteIsin = ref('')
+const sparklines = ref({})
 
 async function ladeAlles() {
   try {
@@ -23,6 +26,8 @@ async function ladeAlles() {
       holeMeistgehandelt(),
     ])
     spreads.value = spreadDaten
+    const einzigartigeIsins = [...new Set(spreadDaten.map((s) => s.isin))].slice(0, 12)
+    ladeSparklines(einzigartigeIsins)
     topMover.value = moverDaten.slice(0, 5)
     meistgehandelt.value = gehandeltDaten.slice(0, 5)
   } catch (fehler) {
@@ -40,6 +45,31 @@ const topSechsSpreads = computed(() =>
     .sort((a, b) => Math.abs(b.spread_prozent) - Math.abs(a.spread_prozent))
     .slice(0, 6)
 )
+
+const proIsinMaxSpread = computed(() => {
+  const gruppen = {}
+  for (const e of spreads.value) {
+    const bestehender = gruppen[e.isin]
+    if (!bestehender || Math.abs(e.spread_prozent) > Math.abs(bestehender.spread_prozent)) {
+      gruppen[e.isin] = e
+    }
+  }
+  return Object.values(gruppen)
+})
+
+const durchschnittlicherSpread = computed(() => {
+  const werte = proIsinMaxSpread.value.map((e) => Math.abs(e.spread_prozent))
+  if (werte.length === 0) return 0
+  return werte.reduce((a, b) => a + b, 0) / werte.length
+})
+
+async function ladeSparklines(isins) {
+  try {
+    sparklines.value = await holeSparklines(isins)
+  } catch {
+    sparklines.value = {}
+  }
+}
 
 const marktbreite = computed(() => {
   const positive = topMover.value.filter((m) => m.veraenderung_prozent >= 0).length
@@ -96,6 +126,13 @@ onMounted(() => {
               @select="ausgewaehlteIsin = $event"
             />
           </BaseCard>
+
+          <SecurityListCard
+            :eintraege="spreads"
+            :sparklines="sparklines"
+            :ausgewaehlte-isin="ausgewaehlteIsin"
+            @select="ausgewaehlteIsin = $event"
+          />
 
           <InstrumentDetail v-if="ausgewaehlteIsin" :isin="ausgewaehlteIsin" />
         </div>

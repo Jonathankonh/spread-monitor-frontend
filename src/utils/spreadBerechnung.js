@@ -1,8 +1,17 @@
+function rundeAuf15Minuten(isoZeit) {
+  const datum = new Date(isoZeit)
+  const minuten = datum.getMinutes()
+  const gerundet = Math.floor(minuten / 15) * 15
+  datum.setMinutes(gerundet, 0, 0)
+  return datum.toISOString()
+}
+
 export function berechneSpreadUeberZeit(rohdaten) {
-  const zeitpunkte = [...new Set(rohdaten.map((d) => d.bucket_start))].sort()
+  const gruppiert = rohdaten.map((d) => ({ ...d, bucket_start: rundeAuf15Minuten(d.bucket_start) }))
+  const zeitpunkte = [...new Set(gruppiert.map((d) => d.bucket_start))].sort()
 
   return zeitpunkte.map((zeit) => {
-    const preise = rohdaten
+    const preise = gruppiert
       .filter((d) => d.bucket_start === zeit)
       .map((d) => d.close)
       .filter((p) => p != null)

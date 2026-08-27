@@ -34,12 +34,26 @@ const chartDaten = computed(() => ({
   ],
 }))
 
+function holeCssVariable(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
+}
+
 const optionen = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: { legend: { display: false } },
   scales: {
-    x: { display: false },
+    x: {
+      display: true,
+      grid: { display: false },
+      border: { display: false },
+      ticks: {
+        color: holeCssVariable('--fg4'),
+        font: { size: 11 },
+        maxTicksLimit: 6,
+        maxRotation: 0,
+      },
+    },
     y: { display: false, min: 0 },
   },
 }

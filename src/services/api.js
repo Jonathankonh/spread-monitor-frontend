@@ -29,3 +29,9 @@ export async function holeTagesveraenderung() {
   if (!antwort.ok) throw new Error('Serverfehler: ' + antwort.status)
   return antwort.json()
 }
+
+export async function holeSparklines(isins) {
+  const antwort = await fetch(`${API_BASE}/sparklines?isins=${isins.join(',')}`)
+  if (!antwort.ok) throw new Error('Serverfehler: ' + antwort.status)
+  return antwort.json()
+}
