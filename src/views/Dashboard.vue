@@ -60,69 +60,71 @@ onMounted(() => {
   <div class="dashboard">
     <p v-if="ladeFehler" class="dashboard__fehler">Fehler beim Laden: {{ ladeFehler }}</p>
 
-    <div v-else class="dashboard__grid">
-      <StatCard
-        v-if="groessterSpread"
-        label="Größter Preisunterschied gerade jetzt"
-        :value="groessterSpread.spread_prozent.toFixed(2)"
-        unit="%"
-      >
-        {{ holeName(groessterSpread.isin) }} · {{ groessterSpread.boerse_a }} vs. {{ groessterSpread.boerse_b }}
-      </StatCard>
+    <template v-else>
+      <div class="dashboard__kpi-row">
+        <StatCard
+          v-if="groessterSpread"
+          label="Größter Preisunterschied gerade jetzt"
+          :value="groessterSpread.spread_prozent.toFixed(2)"
+          unit="%"
+        >
+          {{ holeName(groessterSpread.isin) }} · {{ groessterSpread.boerse_a }} vs. {{ groessterSpread.boerse_b }}
+        </StatCard>
 
-      <BaseCard padding="lg">
-        <p class="dashboard__label">Marktbreite heute</p>
-        <p class="dashboard__value">{{ marktbreite.value }} von {{ marktbreite.max }} im Plus</p>
-        <ProgressBar :value="marktbreite.value" :max="marktbreite.max" />
-      </BaseCard>
+        <BaseCard padding="lg">
+          <p class="dashboard__label">Marktbreite heute</p>
+          <p class="dashboard__value">{{ marktbreite.value }} von {{ marktbreite.max }} im Plus</p>
+          <ProgressBar :value="marktbreite.value" :max="marktbreite.max" />
+        </BaseCard>
+      </div>
 
-      <BaseCard padding="lg" class="dashboard__wide">
-        <h2 class="dashboard__heading">Preisunterschiede zwischen den Handelsplätzen</h2>
-        <p class="dashboard__subheading">Die sechs Wertpapiere mit dem größten Unterschied zwischen zwei Börsen</p>
-        <SpreadRankingRow
-          v-for="s in topSechsSpreads"
-          :key="s.isin + s.boerse_a + s.boerse_b"
-          :name="holeName(s.isin)"
-          :boerse-a="s.boerse_a"
-          :boerse-b="s.boerse_b"
-          :spread-prozent="Math.abs(s.spread_prozent)"
-          :max-spread="Math.abs(topSechsSpreads[0]?.spread_prozent) || 1"
-        />
-      </BaseCard>
-
-      <BaseCard padding="lg">
-        <h2 class="dashboard__heading">Top Mover</h2>
-        <div v-for="mover in topMover" :key="mover.isin + mover.boerse" class="dashboard__row">
-          <span class="dashboard__row-name">{{ holeName(mover.isin) }}</span>
-          <Badge :label="mover.boerse" :boerse="mover.boerse" />
-          <span
-            class="dashboard__row-value"
-            :class="mover.veraenderung_prozent >= 0 ? 'dashboard__positiv' : 'dashboard__negativ'"
-          >
-        {{ mover.veraenderung_prozent.toFixed(2) }}%
-          </span>
+      <div class="dashboard__main-grid">
+        <div class="dashboard__main-column">
+          <BaseCard padding="lg">
+            <h2 class="dashboard__heading">Preisunterschiede zwischen den Handelsplätzen</h2>
+            <p class="dashboard__subheading">Die sechs Wertpapiere mit dem größten Unterschied zwischen zwei Börsen</p>
+            <SpreadRankingRow
+              v-for="s in topSechsSpreads"
+              :key="s.isin + s.boerse_a + s.boerse_b"
+              :name="holeName(s.isin)"
+              :boerse-a="s.boerse_a"
+              :boerse-b="s.boerse_b"
+              :spread-prozent="Math.abs(s.spread_prozent)"
+              :max-spread="Math.abs(topSechsSpreads[0]?.spread_prozent) || 1"
+            />
+          </BaseCard>
         </div>
-      </BaseCard>
 
-      <BaseCard padding="lg">
-        <h2 class="dashboard__heading">Meistgehandelt</h2>
-        <div v-for="eintrag in meistgehandelt" :key="eintrag.isin + eintrag.boerse" class="dashboard__row">
-          <span class="dashboard__row-name">{{ holeName(eintrag.isin) }}</span>
-          <Badge :label="eintrag.boerse" :boerse="eintrag.boerse" />
-          <span class="dashboard__row-value">{{ eintrag.gesamt_trades }}</span>
+        <div class="dashboard__sidebar">
+          <BaseCard padding="lg">
+            <h2 class="dashboard__heading">Top Mover</h2>
+            <div v-for="mover in topMover" :key="mover.isin + mover.boerse" class="dashboard__row">
+              <span class="dashboard__row-name">{{ holeName(mover.isin) }}</span>
+              <Badge :label="mover.boerse" :boerse="mover.boerse" />
+              <span
+                class="dashboard__row-value"
+                :class="mover.veraenderung_prozent >= 0 ? 'dashboard__positiv' : 'dashboard__negativ'"
+              >
+                {{ mover.veraenderung_prozent.toFixed(2) }}%
+              </span>
+            </div>
+          </BaseCard>
+
+          <BaseCard padding="lg">
+            <h2 class="dashboard__heading">Meistgehandelt</h2>
+            <div v-for="eintrag in meistgehandelt" :key="eintrag.isin + eintrag.boerse" class="dashboard__row">
+              <span class="dashboard__row-name">{{ holeName(eintrag.isin) }}</span>
+              <Badge :label="eintrag.boerse" :boerse="eintrag.boerse" />
+              <span class="dashboard__row-value">{{ eintrag.gesamt_trades }}</span>
+            </div>
+          </BaseCard>
         </div>
-      </BaseCard>
-    </div>
+      </div>
+    </template>
   </div>
 </template>
 
 <style scoped>
-.dashboard {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: var(--space-xl) var(--space-lg);
-}
-
 .dashboard {
   max-width: 1440px;
   margin: 0 auto;
@@ -155,21 +157,6 @@ onMounted(() => {
   gap: 16px;
 }
 
-@media (max-width: 1200px) {
-  .dashboard__main-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .dashboard__kpi-row {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 760px) {
-  .dashboard {
-    padding: 20px 16px 32px;
-  }
-}
 .dashboard__heading {
   margin: 0 0 4px 0;
   font-size: 1.1rem;
@@ -231,5 +218,21 @@ onMounted(() => {
   padding: var(--space-lg);
   text-align: center;
   color: var(--color-negative);
+}
+
+@media (max-width: 1200px) {
+  .dashboard__main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard__kpi-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .dashboard {
+    padding: 20px 16px 32px;
+  }
 }
 </style>

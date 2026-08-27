@@ -76,4 +76,15 @@ const balkenBreite = computed(() => {
   font-variant-numeric: tabular-nums;
   color: var(--color-accent);
 }
+
+@media (max-width: 760px) {
+  .spread-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .spread-row__value {
+    text-align: left;
+  }
+}
 </style>

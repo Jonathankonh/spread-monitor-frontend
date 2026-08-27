@@ -1,6 +1,9 @@
 <script setup>
-import AppHeader from './components/base/AppHeader.vue'
+import { useTheme } from './composables/useTheme.js'
+import AppHeader from './components/AppHeader.vue'
 import Dashboard from './views/Dashboard.vue'
+
+useTheme() // aktiviert Dark Mode als Standard, auch ohne den Button zu benutzen
 </script>
 
 <template>

@@ -172,4 +172,18 @@ function waehleTab(item) {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.35; }
 }
+
+@media (max-width: 900px) {
+  .app-header {
+    flex-wrap: wrap;
+    height: auto;
+    gap: 12px;
+    padding-bottom: 12px;
+  }
+
+  .app-header__search {
+    width: 100%;
+    order: 3;
+  }
+}
 </style>
