@@ -10,6 +10,8 @@ import SpreadRankingRow from '@/components/base/SpreadRankingRow.vue'
 import InstrumentDetail from '@/views/InstrumentDetail.vue'
 import SecurityListCard from '@/components/SecurityListCard.vue'
 import { holeSparklines } from '@/services/api.js'
+import VenueActivityBar from '@/components/base/VenueActivityBar.vue'
+import { holeHandelsaktivitaet } from '@/services/api.js'
 
 const spreads = ref([])
 const topMover = ref([])
@@ -17,15 +19,20 @@ const meistgehandelt = ref([])
 const ladeFehler = ref(null)
 const ausgewaehlteIsin = ref('')
 const sparklines = ref({})
+const handelsaktivitaet = ref({})
+
 
 async function ladeAlles() {
   try {
-    const [spreadDaten, moverDaten, gehandeltDaten] = await Promise.all([
+    const [spreadDaten, moverDaten, gehandeltDaten, aktivitaetDaten] = await Promise.all([
       holeSpreads(),
       holeTagesveraenderung(),
       holeMeistgehandelt(),
+      holeHandelsaktivitaet(),
     ])
+
     spreads.value = spreadDaten
+    handelsaktivitaet.value = aktivitaetDaten
     const einzigartigeIsins = [...new Set(spreadDaten.map((s) => s.isin))].slice(0, 12)
     ladeSparklines(einzigartigeIsins)
     topMover.value = moverDaten.slice(0, 5)
@@ -95,6 +102,7 @@ onMounted(() => {
       <div class="dashboard__kpi-row">
         <StatCard
           v-if="groessterSpread"
+          variant="hero"
           label="Größter Preisunterschied gerade jetzt"
           :value="groessterSpread.spread_prozent.toFixed(2)"
           unit="%"
@@ -106,6 +114,14 @@ onMounted(() => {
           <p class="dashboard__label">Marktbreite heute</p>
           <p class="dashboard__value">{{ marktbreite.value }} von {{ marktbreite.max }} im Plus</p>
           <ProgressBar :value="marktbreite.value" :max="marktbreite.max" />
+        </BaseCard>
+
+        <BaseCard padding="lg">
+          <p class="dashboard__label">Durchschnittlicher Spread</p>
+          <p class="dashboard__subheading" style="margin-bottom: 8px">über alle beobachteten Werte</p>
+          <p class="dashboard__value" style="font-size: 38px; font-family: var(--font-mono)">
+            {{ durchschnittlicherSpread.toFixed(2) }}<span style="font-size: 17px; color: var(--fg2)">%</span>
+          </p>
         </BaseCard>
       </div>
 
@@ -159,6 +175,12 @@ onMounted(() => {
               <Badge :label="eintrag.boerse" :boerse="eintrag.boerse" />
               <span class="dashboard__row-value">{{ eintrag.gesamt_trades }}</span>
             </div>
+          </BaseCard>
+
+          <BaseCard padding="lg">
+            <h2 class="dashboard__heading">Handelsaktivität je Handelsplatz</h2>
+            <p class="dashboard__subheading">Anteil aller heute erfassten Trades</p>
+            <VenueActivityBar :daten="handelsaktivitaet" />
           </BaseCard>
         </div>
       </div>

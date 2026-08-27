@@ -35,3 +35,9 @@ export async function holeSparklines(isins) {
   if (!antwort.ok) throw new Error('Serverfehler: ' + antwort.status)
   return antwort.json()
 }
+
+export async function holeHandelsaktivitaet() {
+  const antwort = await fetch(`${API_BASE}/handelsaktivitaet`)
+  if (!antwort.ok) throw new Error('Serverfehler: ' + antwort.status)
+  return antwort.json()
+}
