@@ -143,6 +143,8 @@ onMounted(() => {
       </BaseCard>
     </div>
 
+    <MarketClosedBanner v-if="marktGeschlossen" :letztes-update="letztesUpdate" />
+
     <template v-else>
       <div class="dashboard__kpi-row">
         <StatCard
@@ -295,8 +297,6 @@ onMounted(() => {
   margin-top: 34px;
   margin-bottom: 24px;
 }
-
-<MarketClosedBanner v-if="marktGeschlossen" :letztes-update="letztesUpdate" />
 
 .dashboard__kpi-row {
   display: grid;
