@@ -1,4 +1,4 @@
-const API_BASE = 'http://178.105.153.4:3001/api'
+const API_BASE = 'https://spread-monitor-backend.duckdns.org/api'
 
 export async function holeAktuellePreise() {
   const antwort = await fetch(`${API_BASE}/aktuelle-preise`)
