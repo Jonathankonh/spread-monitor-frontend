@@ -24,6 +24,7 @@ body {
   --up: oklch(0.72 0.15 155);
   --down: oklch(0.68 0.17 27);
 
+
   --grad-bar: linear-gradient(90deg, oklch(0.52 0.16 305), oklch(0.78 0.16 298));
   --grad-hero: linear-gradient(135deg, oklch(0.28 0.075 300), oklch(0.22 0.035 305));
 
@@ -52,6 +53,7 @@ body {
   --color-accent-soft: var(--accent-soft);
   --color-positive: var(--up);
   --color-negative: var(--down);
+  --hero-label-color: oklch(0.85 0.08 300);
 
   --radius-sm: 8px;
   --radius-md: 16px;
@@ -71,4 +73,23 @@ body {
   color: var(--fg);
   font-family: var(--font-family);
   margin: 0;
+}
+
+[data-theme='light'] {
+  --bg: oklch(0.98 0.002 300);
+  --surface: oklch(0.96 0.004 300);
+  --raised: oklch(0.93 0.006 300);
+  --surface-sel: oklch(0.90 0.03 300);
+  --footer: oklch(0.95 0.004 300);
+  --fg: oklch(0.20 0.006 300);
+  --fg2: oklch(0.38 0.008 300);
+  --fg3: oklch(0.50 0.010 300);
+  --fg4: oklch(0.58 0.010 300);
+  --line: oklch(0.85 0.008 300);
+  --track: oklch(0.88 0.006 300);
+  --accent: oklch(0.52 0.19 300);
+  --accent-text: oklch(0.48 0.19 300);
+  --accent-soft: oklch(0.90 0.05 300);
+  --grad-hero: linear-gradient(135deg, oklch(0.94 0.03 300), oklch(0.97 0.015 300));
+  --hero-label-color: oklch(0.45 0.10 300);
 }

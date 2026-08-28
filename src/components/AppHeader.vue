@@ -88,6 +88,29 @@ function beiEnter() {
         ></span>
         <span>{{ formatiereStatus({ marketOpen, lastUpdate }) }}</span>
       </div>
+      <button
+        class="app-header__theme-toggle"
+        @click="toggle"
+        :aria-label="theme === 'dark' ? 'Zu Light Mode wechseln' : 'Zu Dark Mode wechseln'"
+      >
+        <svg v-if="theme === 'dark'" width="15" height="15" viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="5" stroke="currentColor" stroke-width="2" />
+          <path
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+          />
+        </svg>
+        <svg v-else width="15" height="15" viewBox="0 0 24 24" fill="none">
+          <path
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linejoin="round"
+            d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"
+          />
+        </svg>
+      </button>
     </div>
   </header>
 </template>
@@ -266,5 +289,24 @@ function beiEnter() {
   font-family: var(--font-mono);
   color: var(--fg4);
   font-size: 11.5px;
+}
+
+.app-header__theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: var(--surface);
+  color: var(--fg2);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.app-header__theme-toggle:hover {
+  background: var(--raised);
+  color: var(--fg);
 }
 </style>

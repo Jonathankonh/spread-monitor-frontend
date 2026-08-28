@@ -53,7 +53,7 @@ defineProps({
 }
 
 .stat-card--hero .stat-card__label {
-  color: oklch(0.85 0.08 300);
+  color: var(--hero-label-color);
 }
 
 .stat-card--hero .stat-card__value {
