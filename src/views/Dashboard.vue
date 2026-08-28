@@ -13,6 +13,9 @@ import { holeSparklines } from '@/services/api.js'
 import VenueActivityBar from '@/components/base/VenueActivityBar.vue'
 import { holeHandelsaktivitaet } from '@/services/api.js'
 import SkeletonLine from '@/components/base/SkeletonLine.vue'
+import { holeLetztesUpdate } from '@/services/api.js'
+import MarketClosedBanner from '@/components/base/MarketClosedBanner.vue'
+
 
 const spreads = ref([])
 const topMover = ref([])
@@ -24,15 +27,23 @@ const handelsaktivitaet = ref({})
 const datenluecken = ref('Keine Datenlücken seit 9:00.')
 const istGeladen = ref(false)
 const alleVeraenderungen = ref([])
+const zeigeInfo = ref(false)
+const letztesUpdate = ref(null)
+const marktGeschlossen = computed(() => {
+  if (!letztesUpdate.value) return false
+  const minutenVergangen = (Date.now() - letztesUpdate.value.getTime()) / 60000
+  return minutenVergangen > 20
+})
 
 
 async function ladeAlles() {
   try {
-    const [spreadDaten, moverDaten, gehandeltDaten, aktivitaetDaten] = await Promise.all([
+    const [spreadDaten, moverDaten, gehandeltDaten, aktivitaetDaten, letztesUpdateDaten] = await Promise.all([
       holeSpreads(),
       holeTagesveraenderung(),
       holeMeistgehandelt(),
       holeHandelsaktivitaet(),
+      holeLetztesUpdate(),
     ])
     spreads.value = spreadDaten
     alleVeraenderungen.value = moverDaten
@@ -41,6 +52,7 @@ async function ladeAlles() {
     handelsaktivitaet.value = aktivitaetDaten
     ladeSparklines([...new Set(spreadDaten.map((s) => s.isin))])
     istGeladen.value = true
+    letztesUpdate.value = letztesUpdateDaten
   } catch (fehler) {
     ladeFehler.value = fehler.message
   }
@@ -99,6 +111,28 @@ onMounted(() => {
 </script>
 
 <template>
+  <div class="dashboard__intro">
+    <h1 class="dashboard__intro-title">Preisvergleich deutscher Börsenplätze</h1>
+    <p class="dashboard__intro-subtitle">
+      Live-Analyse echter Marktdaten von gettex, Xetra, LS Exchange und EIX —
+      <button class="dashboard__intro-info-toggle" @click="zeigeInfo = !zeigeInfo">
+        mehr zu den Daten
+      </button>
+    </p>
+  </div>
+
+  <div v-if="zeigeInfo" class="dashboard__info-box">
+    <p>
+      Diese Auswertung basiert auf <strong>Post-Trade-Daten</strong> (tatsächlich
+      ausgeführte Handelsgeschäfte) aller vier Handelsplätze sowie
+      <strong>Pre-Trade-Quotes</strong> (Bid/Ask-Kurse) von Xetra als
+      Vergleichsreferenz. Die Daten werden automatisiert im Minutentakt erfasst
+      und stammen aus den öffentlichen, MiFID-II-konformen Delayed-Data-Feeds der
+      Börsen (verzögert, i. d. R. bis zu 15 Minuten) — kein Echtzeit-Feed für
+      Trading-Entscheidungen.
+    </p>
+  </div>
+
   <div class="dashboard">
     <p v-if="ladeFehler" class="dashboard__fehler">...</p>
 
@@ -214,6 +248,55 @@ onMounted(() => {
   margin: 0 auto;
   padding: 30px clamp(16px, 4vw, 34px) 40px;
 }
+
+.dashboard__intro {
+  margin-bottom: 24px;
+}
+
+.dashboard__intro-title {
+  margin: 0 0 6px 0;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.dashboard__intro-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--fg3);
+}
+
+.dashboard__intro-info-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent-text);
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.dashboard__info-box {
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  border-radius: var(--radius-row);
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.dashboard__info-box p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--fg2);
+  line-height: 1.6;
+}
+
+.dashboard__intro {
+  margin-top: 34px;
+  margin-bottom: 24px;
+}
+
+<MarketClosedBanner v-if="marktGeschlossen" :letztes-update="letztesUpdate" />
 
 .dashboard__kpi-row {
   display: grid;

@@ -41,3 +41,10 @@ export async function holeHandelsaktivitaet() {
   if (!antwort.ok) throw new Error('Serverfehler: ' + antwort.status)
   return antwort.json()
 }
+
+export async function holeLetztesUpdate() {
+  const daten = await holeAktuellePreise()
+  if (daten.length === 0) return null
+  const zeitpunkte = daten.map((d) => new Date(d.bucket_start).getTime())
+  return new Date(Math.max(...zeitpunkte))
+}
