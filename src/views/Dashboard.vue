@@ -12,6 +12,7 @@ import SecurityListCard from '@/components/SecurityListCard.vue'
 import { holeSparklines } from '@/services/api.js'
 import VenueActivityBar from '@/components/base/VenueActivityBar.vue'
 import { holeHandelsaktivitaet } from '@/services/api.js'
+import SkeletonLine from '@/components/base/SkeletonLine.vue'
 
 const spreads = ref([])
 const topMover = ref([])
@@ -20,6 +21,9 @@ const ladeFehler = ref(null)
 const ausgewaehlteIsin = ref('')
 const sparklines = ref({})
 const handelsaktivitaet = ref({})
+const datenluecken = ref('Keine Datenlücken seit 9:00.')
+const istGeladen = ref(false)
+const alleVeraenderungen = ref([])
 
 
 async function ladeAlles() {
@@ -30,13 +34,13 @@ async function ladeAlles() {
       holeMeistgehandelt(),
       holeHandelsaktivitaet(),
     ])
-
     spreads.value = spreadDaten
-    handelsaktivitaet.value = aktivitaetDaten
-    const einzigartigeIsins = [...new Set(spreadDaten.map((s) => s.isin))].slice(0, 12)
-    ladeSparklines(einzigartigeIsins)
+    alleVeraenderungen.value = moverDaten
     topMover.value = moverDaten.slice(0, 5)
     meistgehandelt.value = gehandeltDaten.slice(0, 5)
+    handelsaktivitaet.value = aktivitaetDaten
+    ladeSparklines([...new Set(spreadDaten.map((s) => s.isin))])
+    istGeladen.value = true
   } catch (fehler) {
     ladeFehler.value = fehler.message
   }
@@ -79,8 +83,8 @@ async function ladeSparklines(isins) {
 }
 
 const marktbreite = computed(() => {
-  const positive = topMover.value.filter((m) => m.veraenderung_prozent >= 0).length
-  return { value: positive, max: topMover.value.length }
+  const positive = alleVeraenderungen.value.filter((m) => m.veraenderung_prozent >= 0).length
+  return { value: positive, max: alleVeraenderungen.value.length }
 })
 
 watch(topSechsSpreads, (neueSpreads) => {
@@ -96,7 +100,14 @@ onMounted(() => {
 
 <template>
   <div class="dashboard">
-    <p v-if="ladeFehler" class="dashboard__fehler">Fehler beim Laden: {{ ladeFehler }}</p>
+    <p v-if="ladeFehler" class="dashboard__fehler">...</p>
+
+    <div v-else-if="!istGeladen" class="dashboard__loading">
+      <BaseCard padding="lg" v-for="n in 3" :key="n">
+        <SkeletonLine width="60%" height="14px" />
+        <SkeletonLine width="40%" height="38px" />
+      </BaseCard>
+    </div>
 
     <template v-else>
       <div class="dashboard__kpi-row">
@@ -143,15 +154,17 @@ onMounted(() => {
             />
           </BaseCard>
 
+          <InstrumentDetail v-if="ausgewaehlteIsin" :isin="ausgewaehlteIsin" />
+
+
           <SecurityListCard
             :eintraege="spreads"
             :sparklines="sparklines"
             :ausgewaehlte-isin="ausgewaehlteIsin"
             @select="ausgewaehlteIsin = $event"
           />
-
-          <InstrumentDetail v-if="ausgewaehlteIsin" :isin="ausgewaehlteIsin" />
         </div>
+
 
         <div class="dashboard__sidebar">
           <BaseCard padding="lg">
@@ -181,6 +194,13 @@ onMounted(() => {
             <h2 class="dashboard__heading">Handelsaktivität je Handelsplatz</h2>
             <p class="dashboard__subheading">Anteil aller heute erfassten Trades</p>
             <VenueActivityBar :daten="handelsaktivitaet" />
+          </BaseCard>
+
+          <BaseCard padding="lg" style="background: var(--footer)">
+            <p class="dashboard__footnote">
+              Daten von gettex, Xetra, LS Exchange und EIX, Abfrage im Minutentakt.
+              {{ datenluecken }}
+            </p>
           </BaseCard>
         </div>
       </div>
@@ -298,5 +318,18 @@ onMounted(() => {
   .dashboard {
     padding: 20px 16px 32px;
   }
+}
+
+.dashboard__footnote {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--fg4);
+}
+
+.dashboard__loading {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
 }
 </style>
