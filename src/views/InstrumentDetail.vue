@@ -104,4 +104,15 @@ const spitzenSpread = computed(() => {
   font-family: var(--font-mono);
   color: var(--fg2);
 }
+
+@media (max-width: 500px) {
+  .price-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .price-header__price-block {
+    text-align: left;
+  }
+}
 </style>
