@@ -181,4 +181,10 @@ onMounted(() => {
   color: var(--down);
 }
 
+@media (max-width: 480px) {
+  .wertpapier-seite__vorschlaege {
+    grid-template-columns: 1fr;
+  }
+}
+
 </style>

@@ -415,4 +415,13 @@ onMounted(() => {
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
+
+@media (max-width: 480px) {
+  .dashboard__intro-title {
+    font-size: 24px;
+  }
+  .dashboard {
+    padding: 16px 14px 32px;
+  }
+}
 </style>

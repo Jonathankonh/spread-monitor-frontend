@@ -309,4 +309,44 @@ function beiEnter() {
   background: var(--raised);
   color: var(--fg);
 }
+
+@media (max-width: 640px) {
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .app-header__left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .app-header__nav {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .app-header__brand {
+    font-size: 15px;
+  }
+
+  .app-header__right {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .app-header__search {
+    width: 100%;
+  }
+
+  .app-header__status {
+    font-size: 11px;
+    padding: 8px 12px;
+  }
+}
 </style>

@@ -126,4 +126,14 @@ onMounted(() => {
 .handelsplaetze-seite {
   margin-top: 34px;
 }
+
+@media (max-width: 500px) {
+  .handelsplatz-karte {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .handelsplatz-karte__anteil {
+    text-align: left;
+  }
+}
 </style>
