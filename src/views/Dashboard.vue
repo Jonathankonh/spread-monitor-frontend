@@ -424,6 +424,16 @@ onMounted(() => {
   }
 }
 
+@media (max-width: 1200px) {
+  .dashboard__main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard__sidebar {
+    width: 100%;
+  }
+}
+
 .dashboard__footnote {
   margin: 0;
   font-size: 12px;
