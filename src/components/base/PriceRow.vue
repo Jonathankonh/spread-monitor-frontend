@@ -150,12 +150,38 @@ defineEmits(['select'])
 
 @media (max-width: 760px) {
   .price-row {
-    grid-template-columns: 1fr;
-    gap: 8px;
+    grid-template-columns: 1fr 90px;
+    grid-template-rows: auto auto auto;
+    row-gap: 6px;
+    column-gap: 12px;
   }
-  .price-row__price-block,
+
+  .price-row__name-block {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .price-row__badges {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .price-row__sparkline {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .price-row__price-block {
+    grid-column: 2;
+    grid-row: 2;
+    text-align: right;
+  }
+
   .price-row__spread {
+    grid-column: 1 / -1;
+    grid-row: 3;
     text-align: left;
+    margin-top: 4px;
   }
 }
 </style>

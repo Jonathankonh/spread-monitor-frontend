@@ -418,7 +418,7 @@ onMounted(() => {
 
 @media (max-width: 480px) {
   .dashboard__intro-title {
-    font-size: 24px;
+    font-size: 28px;
   }
   .dashboard {
     padding: 16px 14px 32px;

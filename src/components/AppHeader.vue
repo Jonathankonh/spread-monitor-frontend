@@ -314,7 +314,7 @@ function beiEnter() {
   .app-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 10px;
   }
 
   .app-header__left {
@@ -324,20 +324,25 @@ function beiEnter() {
     width: 100%;
   }
 
-  .app-header__nav {
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
   .app-header__brand {
     font-size: 15px;
   }
 
+  .app-header__nav {
+    width: 100%;
+    overflow-x: auto;
+  }
+
   .app-header__right {
     width: 100%;
-    flex-wrap: wrap;
+    display: flex;
+    align-items: center;
     gap: 8px;
+  }
+
+  .app-header__search-wrapper {
+    flex: 1;
+    min-width: 0;
   }
 
   .app-header__search {
@@ -345,8 +350,16 @@ function beiEnter() {
   }
 
   .app-header__status {
-    font-size: 11px;
-    padding: 8px 12px;
+    flex-shrink: 0;
+    padding: 8px;
+  }
+
+  .app-header__status span:last-child {
+    display: none;
+  }
+
+  .app-header__theme-toggle {
+    flex-shrink: 0;
   }
 }
 </style>

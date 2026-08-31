@@ -18,8 +18,9 @@ defineProps({
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
+  width: 100%;
+  box-sizing: border-box;
 }
-
 .card--padding-sm {
   padding: var(--space-sm);
 }
