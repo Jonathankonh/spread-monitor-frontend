@@ -165,7 +165,7 @@ onMounted(() => {
 
         <BaseCard padding="lg">
           <p class="dashboard__label">Durchschnittlicher Spread</p>
-          <p class="dashboard__subheading" style="margin-bottom: 8px">über alle beobachteten Werte</p>
+          <p class="dashboard__subheading dashboard__hide-mobile" style="margin-bottom: 8px">über alle beobachteten Werte</p>
           <p class="dashboard__value" style="font-size: 38px; font-family: var(--font-mono)">
             {{ durchschnittlicherSpread.toFixed(2) }}<span style="font-size: 17px; color: var(--fg2)">%</span>
           </p>
@@ -388,9 +388,13 @@ onMounted(() => {
 }
 
 @media (max-width: 640px) {
+  .dashboard__hide-mobile {
+    display: none;
+  }
+
   .dashboard__kpi-row {
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    gap: 10px;
   }
 
   .dashboard__kpi-row > *:first-child {
@@ -398,17 +402,19 @@ onMounted(() => {
   }
 
   .dashboard__kpi-row .card {
-    padding: var(--space-sm);
+    padding: 18px 16px;
   }
 
   .dashboard__label {
-    font-size: 0.75rem;
-    margin-bottom: 4px;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+    line-height: 1.3;
   }
 
   .dashboard__value {
-    font-size: 1.4rem;
-    line-height: 1.15;
+    font-size: 1.5rem;
+    line-height: 1.2;
+    margin-top: 4px;
   }
 }
 
