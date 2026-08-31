@@ -389,15 +389,26 @@ onMounted(() => {
 
 @media (max-width: 640px) {
   .dashboard__kpi-row {
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-    .dashboard__value {
-      font-size: 1rem;
-    }
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
   }
 
   .dashboard__kpi-row > *:first-child {
     grid-column: 1 / -1;
+  }
+
+  .dashboard__kpi-row .card {
+    padding: var(--space-sm);
+  }
+
+  .dashboard__label {
+    font-size: 0.75rem;
+    margin-bottom: 4px;
+  }
+
+  .dashboard__value {
+    font-size: 1.4rem;
+    line-height: 1.15;
   }
 }
 
