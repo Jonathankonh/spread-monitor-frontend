@@ -387,13 +387,17 @@ onMounted(() => {
   color: var(--color-negative);
 }
 
-@media (max-width: 1200px) {
-  .dashboard__main-grid {
-    grid-template-columns: 1fr;
+@media (max-width: 640px) {
+  .dashboard__kpi-row {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    .dashboard__value {
+      font-size: 1rem;
+    }
   }
 
-  .dashboard__kpi-row {
-    grid-template-columns: 1fr;
+  .dashboard__kpi-row > *:first-child {
+    grid-column: 1 / -1;
   }
 }
 
