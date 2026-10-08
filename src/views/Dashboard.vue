@@ -34,16 +34,20 @@ const marktGeschlossen = computed(() => {
   const minutenVergangen = (Date.now() - letztesUpdate.value.getTime()) / 60000
   return minutenVergangen > 20
 })
+const ladeFortschritt = ref(0)
+const ladeGesamt = 5
+const ladeProzent = computed(() => Math.round((ladeFortschritt.value / ladeGesamt) * 100))
+
 
 
 async function ladeAlles() {
   try {
     const [spreadDaten, moverDaten, gehandeltDaten, aktivitaetDaten, letztesUpdateDaten] = await Promise.all([
-      holeSpreads(),
-      holeTagesveraenderung(),
-      holeMeistgehandelt(),
-      holeHandelsaktivitaet(),
-      holeLetztesUpdate(),
+      mitFortschritt(holeSpreads()),
+      mitFortschritt(holeTagesveraenderung()),
+      mitFortschritt(holeMeistgehandelt()),
+      mitFortschritt(holeHandelsaktivitaet()),
+      mitFortschritt(holeLetztesUpdate()),
     ])
     spreads.value = spreadDaten
     alleVeraenderungen.value = moverDaten
@@ -108,6 +112,13 @@ watch(topSechsSpreads, (neueSpreads) => {
 onMounted(() => {
   ladeAlles()
 })
+
+function mitFortschritt(promise) {
+  return promise.then((ergebnis) => {
+    ladeFortschritt.value++
+    return ergebnis
+  })
+}
 </script>
 
 <template>
@@ -136,11 +147,11 @@ onMounted(() => {
   <div class="dashboard">
     <p v-if="ladeFehler" class="dashboard__fehler">...</p>
 
-    <div v-else-if="!istGeladen" class="dashboard__loading">
-      <BaseCard padding="lg" v-for="n in 3" :key="n">
-        <SkeletonLine width="60%" height="14px" />
-        <SkeletonLine width="40%" height="38px" />
-      </BaseCard>
+    <div v-else-if="!istGeladen" class="dashboard__loadscreen">
+      <div class="loadbar">
+        <div class="loadbar__fill" :style="{ width: ladeProzent + '%' }"></div>
+      </div>
+      <p class="loadbar__label">Lade Marktdaten … {{ ladeFortschritt }}/{{ ladeGesamt }}</p>
     </div>
 
     <MarketClosedBanner v-if="marktGeschlossen" :letztes-update="letztesUpdate" />
@@ -454,5 +465,37 @@ onMounted(() => {
   .dashboard {
     padding: 16px 14px 32px;
   }
+}
+
+.dashboard__loadscreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+  gap: 16px;
+}
+
+.loadbar {
+  width: min(360px, 80vw);
+  height: 8px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.loadbar__fill {
+  height: 100%;
+  background: #8b5cf6;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.loadbar__label {
+  margin: 0;
+  font-size: 13px;
+  color: var(--fg3);
+  font-variant-numeric: tabular-nums;
 }
 </style>
