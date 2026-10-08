@@ -154,9 +154,9 @@ function mitFortschritt(promise) {
       <p class="loadbar__label">Lade Marktdaten … {{ ladeFortschritt }}/{{ ladeGesamt }}</p>
     </div>
 
-    <MarketClosedBanner v-if="marktGeschlossen" :letztes-update="letztesUpdate" />
-
     <template v-else>
+      <MarketClosedBanner v-if="marktGeschlossen" :letztes-update="letztesUpdate" />
+
       <div class="dashboard__kpi-row">
         <StatCard
           v-if="groessterSpread"
@@ -203,7 +203,6 @@ function mitFortschritt(promise) {
 
           <InstrumentDetail v-if="ausgewaehlteIsin" :isin="ausgewaehlteIsin" />
 
-
           <SecurityListCard
             :eintraege="spreads"
             :sparklines="sparklines"
@@ -211,7 +210,6 @@ function mitFortschritt(promise) {
             @select="ausgewaehlteIsin = $event"
           />
         </div>
-
 
         <div class="dashboard__sidebar">
           <BaseCard padding="lg">
